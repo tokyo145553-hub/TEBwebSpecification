@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var m;try{m=localStorage.getItem("siyousyoMode")}catch(e){}document.documentElement.className="js "+(m==="v"?"v":"h")})()</script>
 <title>TEB防災速報Web 利用者向け仕様書</title>
 <style>
 /* ===== 色・サイズはここで一括変更できます ===== */
@@ -10,8 +11,9 @@
 :root{ --blue:#0017c1; --blue-dark:#00118f; --blue-bg:#e8f1fe; --ink:#1a1a1a; --muted:#4d4d4d; --line:#cccccc; --head:#f2f2f2; --dark:#1f1f1f; --link:#0017c1; --green:#06c755; --red:#ec0000; --red-bg:#fdeeee; --focus:#ffd43d }
 *{ box-sizing:border-box }
 html{ background:#f2f2f2; scroll-behavior:smooth }
-body{ margin:0; padding:20px 12px 40px; color:var(--ink); font:16px/1.7 "Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif }
-.doc{ max-width:860px; margin:0 auto; background:#fff; padding:56px 60px; border-radius:8px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.18) }
+body{ margin:0; padding:0 0 40px; color:var(--ink); font:16px/1.7 "Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif }
+.doc{ max-width:884px; margin:0 auto; padding:16px 12px 40px }
+.page{ --px:60px; --py:56px; margin:0 auto 16px; padding:var(--py) var(--px); background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.18) }
 h2{ margin:44px 0 16px; padding-bottom:10px; font-size:25px; border-bottom:3px solid var(--blue) }
 h2 i{ font-style:normal; color:var(--blue); margin-right:10px }
 h3{ margin:30px 0 12px; padding-left:12px; font-size:18px; border-left:5px solid var(--blue) }
@@ -69,13 +71,13 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 .popup .sh small{ display:block; font-size:8px; color:#333 }
 .popup .btns{ margin:10px 0 0 } .popup .btns span{ flex:1; padding:12px; font-size:13px; background:#fff; border:1.5px solid #bbb; color:#111 }
 .popup .btns .line{ background:var(--green); border-color:var(--green); color:#fff }
-.cover{ margin:-56px -60px 40px; padding:90px 60px; background:var(--blue); color:#fff }
+.cover{ margin:calc(-1*var(--py)) calc(-1*var(--px)) 40px; padding:90px var(--px); background:var(--blue); color:#fff }
 .cover small{ color:#fff; letter-spacing:.1em } .cover h1{ margin:30px 0 0; font-size:40px; line-height:1.4 }
 
 
 /* ===== デジタル庁デザインシステム風の整え ===== */
 body{ letter-spacing:.02em; font-feature-settings:"palt" }
-h2{ margin:56px 0 20px; padding-bottom:12px; font-size:28px; line-height:1.5; border-bottom:1px solid var(--line); position:relative; scroll-margin-top:16px }
+h2{ margin:0 0 24px; padding-bottom:12px; font-size:28px; line-height:1.5; border-bottom:1px solid var(--line); position:relative; scroll-margin-top:16px }
 h2::after{ content:""; position:absolute; left:0; bottom:-1px; width:72px; height:4px; background:var(--blue) }
 h3{ margin:36px 0 14px; padding:2px 0 2px 14px; font-size:20px; line-height:1.5; border-left:4px solid var(--blue) }
 h4{ margin:26px 0 8px; font-size:17px }
@@ -113,46 +115,93 @@ figcaption{ font-size:13px }
 .totop::before{ content:""; width:11px; height:11px; margin:3px 0 3px; border:solid #fff; border-width:3px 3px 0 0; transform:rotate(-45deg) }
 @media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto } .totop{ transition:none } }
 
-/* ===== スマホ表示：紙の枠をやめて全幅・縦積みにする ===== */
+/* ===== ページ送り（PDFのように1ページずつ表示） ===== */
+.js .page{ display:block }
+.js.v .pager{ display:none }
+.js.v .page{ scroll-margin-top:60px }
+/* 横式：ページを左右にスワイプ */
+.js.h, .js.h body{ height:100%; overflow:hidden }
+.js.h body{ height:100vh; height:100dvh; display:flex; flex-direction:column; padding:0 }
+.js.h .bar{ position:static; flex:none }
+.js.h .doc{ flex:1; min-height:0; max-width:none; margin:0; padding:0; display:flex; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scroll-behavior:smooth; overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch }
+.js.h .page{ --px:max(22px,calc((100vw - 800px)/2)); flex:0 0 100%; min-width:0; height:100%; margin:0; padding-bottom:96px; border-radius:0; box-shadow:none; overflow-x:hidden; overflow-y:auto; overscroll-behavior:contain; scroll-snap-align:start; scroll-snap-stop:always }
+/* 表示切り替え */
+.seg{ display:inline-flex }
+.seg button{ min-height:44px; padding:0 10px; border:1px solid var(--blue); background:#fff; color:var(--blue); font:700 12.5px/1.2 inherit; font-family:inherit; white-space:nowrap; cursor:pointer }
+.seg button:first-child{ border-radius:8px 0 0 8px }
+.seg button:last-child{ margin-left:-1px; border-radius:0 8px 8px 0 }
+.seg button[aria-pressed="true"]{ background:var(--blue); color:#fff }
+.seg button:focus-visible{ position:relative; z-index:1 }
+.bar{ position:sticky; top:0; z-index:40; background:#fff; border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top,0px) }
+.bar>div{ display:flex; align-items:center; justify-content:space-between; gap:12px; max-width:860px; margin:0 auto; min-height:52px; padding:0 12px }
+.bar a{ display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border:1px solid var(--blue); border-radius:8px; font-weight:700; font-size:14px; text-decoration:none }
+.bar a:hover{ background:var(--blue-bg) }
+.bar .ttl2{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; color:var(--muted) }
+.bar .pn{ font-weight:700; font-size:15px; white-space:nowrap }
+.pager{ display:flex; gap:12px; margin-top:56px; padding-top:28px; border-top:1px solid var(--line) }
+.pager a,.pager span{ flex:1; display:flex; flex-direction:column; justify-content:center; min-height:64px; padding:10px 16px; border:1px solid var(--blue); border-radius:8px; color:var(--blue); text-decoration:none; font-weight:700; line-height:1.4 }
+.pager a:hover{ background:var(--blue-bg) }
+.pager small{ display:block; font-weight:400; color:var(--muted) }
+.pager .next{ align-items:flex-end; text-align:right; background:var(--blue); color:#fff }
+.pager .next small{ color:#dbe6ff }
+.pager .next:hover{ background:var(--blue-dark) }
+.pager .gap{ visibility:hidden; border:0 }
+
+/* ===== スマホ表示：ゆったり・縦積み ===== */
 @media screen and (max-width:720px){
-  html{ background:#fff; -webkit-text-size-adjust:100% }
-  body{ padding:0; font-size:16px }
-  .doc{ border-radius:0 }
-  .doc{ max-width:none; padding:24px 16px 48px; box-shadow:none }
-  .cover{ margin:-24px -16px 28px; padding:56px 16px }
-  .cover h1{ font-size:28px }
-  h2{ margin:40px 0 16px; font-size:23px }
-  h3{ margin:28px 0 12px; font-size:18px }
-  .note{ padding:12px 14px }
+  html{ background:#f2f2f2; -webkit-text-size-adjust:100% }
+  body{ padding:0 0 88px; font-size:16.5px; line-height:1.95; letter-spacing:.03em }
+  .doc{ padding:0 }
+  .page{ --px:22px; --py:32px; margin:0 0 12px; padding:var(--py) var(--px) 40px; border-radius:0; box-shadow:none }
+  .cover{ margin:calc(-1*var(--py)) calc(-1*var(--px)) 36px; padding:64px var(--px) }
+  .cover h1{ font-size:29px }
+  h2{ margin:0 0 24px; padding-bottom:14px; font-size:24px }
+  h3{ margin:44px 0 16px; font-size:19px; line-height:1.55 }
+  h4{ margin:34px 0 10px; font-size:17px }
+  p{ margin:16px 0 }
+  ul,ol{ padding-left:24px } li{ margin:8px 0 }
+  kbd{ display:inline-block; margin:2px 3px; line-height:1.7 }
+  .note{ margin:32px 0; padding:18px 18px 18px 20px; line-height:1.85 }
+  .toc a{ gap:14px; padding:14px 40px 14px 8px; min-height:72px }
+  .toc em{ font-size:17px }
   /* 表：項目名を上、内容を下に縦積み */
-  table:not(.keep){ border-top:2px solid var(--ink) }
+  table:not(.keep){ margin:24px 0 }
   table:not(.keep) thead{ display:none }
-  table:not(.keep) tr{ display:block; padding:10px 0; border-bottom:1px solid var(--line) }
+  table:not(.keep) tr{ display:block; padding:18px 0; border-bottom:1px solid var(--line) }
   table:not(.keep) th,table:not(.keep) td{ display:block; width:auto!important; padding:0; border:0 }
-  table:not(.keep) tbody th{ margin-bottom:3px; font-size:14.5px; color:var(--blue) }
-  table:not(.keep) td{ font-size:15px }
-  /* 縦積みしない表は文字と余白を詰める */
-  table.keep{ font-size:13px }
-  table.keep th,table.keep td{ padding:8px 6px }
-  /* 図 */
-  .fig{ padding:12px 8px }
-  .fig .row{ gap:16px }
-  .phone,.phone[style]{ width:100%!important; max-width:340px; margin-left:auto; margin-right:auto }
-  .welcome{ flex:none; width:100%; max-width:340px; min-width:0; padding:40px 16px }
-  .fig ol{ flex:none!important; width:100%; min-width:0!important; padding-left:20px }
+  table:not(.keep) tbody th{ margin-bottom:6px; font-size:16px; color:var(--blue) }
+  table:not(.keep) td{ font-size:15.5px; line-height:1.9 }
+  table.keep{ margin:24px 0; font-size:14px; line-height:1.7 }
+  table.keep th,table.keep td{ padding:12px 8px }
+  .fig{ margin:28px 0; padding:18px 12px }
+  .fig .row{ gap:24px }
+  .phone,.phone[style]{ width:100%!important; max-width:340px; margin-left:auto; margin-right:auto; letter-spacing:0 }
+  .welcome{ flex:none; width:100%; max-width:340px; min-width:0; padding:44px 16px }
+  .fig ol{ flex:none!important; width:100%; min-width:0!important; padding-left:22px }
+  .fig li{ margin:10px 0 }
   .tabs span{ font-size:11.5px }
-  figcaption{ text-align:left }
+  figcaption{ margin-top:18px; text-align:left; line-height:1.7 }
+  .pager{ flex-direction:column-reverse; margin-top:48px }
+  .pager .gap{ display:none }
+  .bar .ttl2{ display:none } .bar>div{ justify-content:space-between; gap:8px; padding:0 8px } .bar a{ padding:0 10px } .seg button{ padding:0 8px; font-size:12px }
 }
 @media print{
-  html{ background:#fff } body{ padding:0 } .doc{ max-width:none; padding:0; box-shadow:none }
-  .totop{ display:none } .toc a::after{ display:none } .doc{ border-radius:0 }
-  .cover{ margin:0 0 30px } .br{ break-before:page } .fig,table,.note{ break-inside:avoid }
+  html,html.h,html.h body{ background:#fff; height:auto!important; overflow:visible!important; display:block!important }
+  body{ padding:0; font-size:14.5px; line-height:1.85 } .bar,.pager,.totop{ display:none!important }
+  .doc,.js.h .doc{ display:block!important; max-width:none; padding:0; overflow:visible!important; height:auto!important }
+  .js .page,.page{ display:block!important; height:auto!important; overflow:visible!important; min-height:0; margin:0; padding:0; box-shadow:none; border-radius:0; break-before:page }
+  .page:first-child{ break-before:auto }
+  .br{ break-before:auto } .cover{ margin:0 0 30px; padding:90px 60px }
+  .fig,table,.note{ break-inside:avoid }
+  .toc a::after{ display:none }
 }
 @page{ size:A4; margin:16mm 14mm }
 </style>
 </head>
 <body>
+<header class="bar" id="bar" hidden><div><a href="#pg-1">目次</a><span class="seg" role="group" aria-label="表示方式"><button type="button" data-m="v" aria-pressed="false">↓ スクロール</button><button type="button" data-m="h" aria-pressed="false">→ 横ページ</button></span><span class="ttl2" id="ttl2"></span><span class="pn" id="pn"></span></div></header>
 <div class="doc" id="top">
+<section class="page" id="pg-0">
 
 <!-- ===================== 表紙 ===================== -->
 <div class="cover">
@@ -168,7 +217,8 @@ figcaption{ font-size:13px }
 </table>
 <p><small>本書は利用者向けの機能説明です。防災行動の最終判断は、必ず気象庁・自治体などの公式情報をご確認のうえ、ご自身の責任で行ってください。</small></p>
 
-<!-- ===================== 目次 ===================== -->
+</section>
+<section class="page" id="pg-1"><!-- ===================== 目次 ===================== -->
 <h2 class="br" id="toc-top">目次</h2>
 <nav class="toc" aria-label="目次">
   <a href="#sec1"><b>1</b><span><em>サービス概要</em><small>目的・特長・動作環境</small></span></a>
@@ -184,7 +234,8 @@ figcaption{ font-size:13px }
 <h4>この文書の読み方</h4>
 <p>画面上のボタン名・タブ名は <kbd>このような枠</kbd> で示します。<span class="tag">自動</span> は操作なしで動作する機能です。図は実際の画面のデザイン（配色・文字の大きさ・並び）に合わせて再現した簡略図で、絵文字アイコンやロゴは省略しています。</p>
 
-<!-- ===================== 1 サービス概要 ===================== -->
+</section>
+<section class="page" id="pg-2"><!-- ===================== 1 サービス概要 ===================== -->
 <h2 class="br" id="sec1"><i>1</i>サービス概要</h2>
 <h3>1.1 目的</h3>
 <p>TEB防災速報Webは、気象庁などが公開している防災情報を自動で取得し、読みやすいカード形式で時系列に並べて表示するサービスです。ページを開いている間、新しい情報が発表されると自動でカードが追加されます。</p>
@@ -212,7 +263,8 @@ figcaption{ font-size:13px }
 </table>
 <div class="note red"><b>ご注意</b>本サービスは、ブラウザで画面を開いている間に情報を取得します。画面を閉じている間は新しい情報を受け取れません。また、公式の防災情報伝達手段の代わりにはなりません。</div>
 
-<!-- ===================== 2 画面構成 ===================== -->
+</section>
+<section class="page" id="pg-3"><!-- ===================== 2 画面構成 ===================== -->
 <h2 class="br" id="sec2"><i>2</i>画面構成</h2>
 <p>画面は上から「ヘッダー」「タブ」「更新状況表示」「カード一覧」の順に構成されています。</p>
 
@@ -296,7 +348,8 @@ figcaption{ font-size:13px }
 <p>自動で追加された新着カードは、青い枠線で約8秒間強調表示されます（図1左上のカード）。</p>
 <div class="note"><b>初回読み込みについて</b>起動直後は、各情報元から直近の情報をまとめて取得します。このとき取得した情報は新着としては扱われず、通知音も鳴りません。</div>
 
-<!-- ===================== 3 タブ別の機能 ===================== -->
+</section>
+<section class="page" id="pg-4"><!-- ===================== 3 タブ別の機能 ===================== -->
 <h2 class="br" id="sec3"><i>3</i>タブ別の機能と表示される情報</h2>
 <h3>3.1 <span class="tag">気象</span> タブ</h3>
 <p>気象庁が随時発表する気象関連の情報を表示します。</p>
@@ -380,7 +433,8 @@ figcaption{ font-size:13px }
   </tbody>
 </table>
 
-<!-- ===================== 4 EEW ===================== -->
+</section>
+<section class="page" id="pg-5"><!-- ===================== 4 EEW ===================== -->
 <h2 class="br" id="sec4"><i>4</i>緊急地震速報（EEW）ポップアップ</h2>
 <p>緊急地震速報を検知すると、どのタブを見ていても画面下部にポップアップが表示され、背景が少し暗くなります。</p>
 <figure class="fig" style="margin:14px 0">
@@ -410,7 +464,8 @@ figcaption{ font-size:13px }
 <div class="note red"><b>重要：緊急地震速報についての注意</b>本サービスの緊急地震速報は公開データを取得して表示するもので、通信状況などにより遅延・欠落が生じる可能性があります。揺れから身を守る行動は、テレビ・ラジオ・スマートフォンの公式通知など公的な伝達手段を最優先にしてください。</div>
 <div class="note"><b>「タブを開いていなくても受信する」について</b>設定でオンにすると、ブラウザの別のタブを表示していても受信を続けます。ただし、ブラウザ自体を終了したり、端末がスリープ状態になったりすると受信できない場合があります。</div>
 
-<!-- ===================== 5 カードの操作 ===================== -->
+</section>
+<section class="page" id="pg-6"><!-- ===================== 5 カードの操作 ===================== -->
 <h2 class="br" id="sec5"><i>5</i>カードの操作</h2>
 <h3>5.1 コピー・LINE転送</h3>
 <table>
@@ -436,7 +491,8 @@ figcaption{ font-size:13px }
   <li><b>新着ハイライト</b>：新着カードを約8秒間強調表示します。</li>
 </ul>
 
-<!-- ===================== 6 設定 ===================== -->
+</section>
+<section class="page" id="pg-7"><!-- ===================== 6 設定 ===================== -->
 <h2 class="br" id="sec6"><i>6</i>設定</h2>
 <p>ヘッダー右の <kbd>設定</kbd>（歯車）から開きます。設定内容はお使いの端末（ブラウザ）に保存されます。別の端末や別のブラウザには引き継がれません。</p>
 <table>
@@ -475,7 +531,8 @@ figcaption{ font-size:13px }
 <h3>6.3 詳細設定</h3>
 <p>「詳細設定」内の <kbd>ポップアップをテスト表示</kbd> は、地震火山タブにある最新のEEWを、実際のポップアップと同じ見た目・内容で表示します。使い方の確認用で、実際の発表ではありません。<kbd>閉じる</kbd> で終了します。</p>
 
-<!-- ===================== 7 データ元 ===================== -->
+</section>
+<section class="page" id="pg-8"><!-- ===================== 7 データ元 ===================== -->
 <h2 class="br" id="sec7"><i>7</i>データ元と更新方法</h2>
 <h3>7.1 データ元</h3>
 <table>
@@ -516,7 +573,8 @@ figcaption{ font-size:13px }
 </table>
 <div class="note"><b>ポイント</b>津波情報は気象庁のフィードから常時約1秒ごとにfetchで取得しているため、P2Pの常時接続の状態に左右されません。P2Pの接続が切れても、気象庁の情報は更新され続けます。</div>
 
-<!-- ===================== 8 利用規約 ===================== -->
+</section>
+<section class="page" id="pg-9"><!-- ===================== 8 利用規約 ===================== -->
 <h2 class="br" id="sec8"><i>8</i>利用規約・二次利用・禁止事項</h2>
 <p>本サービスの利用にあたっては、利用規約（第3版）への同意が必要です。全文は <kbd>設定</kbd> → <kbd>利用規約を確認</kbd> からいつでも確認できます。以下は要点であり、正式な内容は画面上の利用規約が優先されます。</p>
 <h3>8.1 利用規約への同意</h3>
@@ -554,7 +612,8 @@ figcaption{ font-size:13px }
 <h3>8.4 規約違反への対応</h3>
 <p>規約に違反する、またはそのおそれがある場合、運営者は内容・悪質性・影響などを総合的に考慮し、注意、利用の制限、個別許可の取り消しなど必要な措置をとることがあります。同様の違反でも、事情に応じて対応が異なる場合があります。</p>
 
-<!-- ===================== 9 注意とFAQ ===================== -->
+</section>
+<section class="page" id="pg-10"><!-- ===================== 9 注意とFAQ ===================== -->
 <h2 class="br" id="sec9"><i>9</i>ご利用上の注意とよくある質問</h2>
 <h3>9.1 ご利用上の注意</h3>
 <ul>
@@ -581,6 +640,7 @@ figcaption{ font-size:13px }
 </table>
 <div class="note"><b>免責事項</b>本書の内容は作成時点のものです。機能・画面・データ元・利用規約は、予告なく変更されることがあります。最新の利用規約は、アプリ内の「設定」→「利用規約を確認」をご覧ください。</div>
 
+</section>
 </div>
 
 <button type="button" class="totop" id="totop" aria-label="ページの先頭へ戻る">先頭へ</button>
@@ -599,13 +659,100 @@ document.querySelectorAll('.phone[data-tab]').forEach(p=>{
 </script>
 <script>
 (function(){
-  const b=document.getElementById('totop');
-  const toggle=()=>b.classList.toggle('show',window.scrollY>400);
-  addEventListener('scroll',toggle,{passive:true}); toggle();
-  b.addEventListener('click',()=>{
-    const r=matchMedia('(prefers-reduced-motion:reduce)').matches;
-    scrollTo({top:0,behavior:r?'auto':'smooth'});
+  const root=document.documentElement, doc=document.querySelector('.doc');
+  const pages=[...document.querySelectorAll('.page')], N=pages.length;
+  const bar=document.getElementById('bar'), ttl=document.getElementById('ttl2'), pn=document.getElementById('pn'), tb=document.getElementById('totop');
+  const segBtns=[...bar.querySelectorAll('.seg button')];
+  bar.hidden=false;
+  const reduce=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const isH=()=>root.classList.contains('h');
+  const title=pg=>{ const h=pg.querySelector('h2'); if(!h) return '表紙';
+    const n=h.querySelector('i'); return n? n.textContent+' '+h.textContent.slice(n.textContent.length) : h.textContent; };
+  const titles=pages.map(title);
+  pages.forEach((pg,i)=>{
+    const prev=i>0?`<a href="#pg-${i-1}"><small>← 前のページ</small>${titles[i-1]}</a>`:'<span class="gap"></span>';
+    const next=i<N-1?`<a class="next" href="#pg-${i+1}"><small>次のページ →</small>${titles[i+1]}</a>`:'<a class="next" href="#pg-1"><small>最後のページです</small>目次へ戻る</a>';
+    pg.insertAdjacentHTML('beforeend','<nav class="pager" aria-label="ページ送り">'+prev+next+'</nav>');
   });
+
+  let cur=0;
+  function setInfo(i){
+    cur=i; ttl.textContent=titles[i]; pn.textContent=(i+1)+' / '+N;
+    document.title=(i? titles[i]+' | ':'')+'TEB防災速報Web 利用者向け仕様書';
+  }
+  function updTop(){
+    const y=isH()? pages[cur].scrollTop : window.scrollY;
+    tb.classList.toggle('show',y>400);
+  }
+  function goH(i,smooth){
+    doc.scrollTo({left:i*doc.clientWidth,behavior:(smooth&&!reduce())?'smooth':'instant'});
+    setInfo(i);
+  }
+  function goV(i){
+    const top=pages[i].getBoundingClientRect().top+scrollY-bar.offsetHeight;
+    scrollTo({top:Math.max(0,top),behavior:'instant'}); setInfo(i);
+  }
+  function remember(i){ try{ history.replaceState(null,'','#pg-'+i); }catch(e){} }
+
+  // スクロールで現在ページを更新
+  doc.addEventListener('scroll',e=>{
+    if(isH()){
+      if(e.target===doc){
+        const i=Math.max(0,Math.min(N-1,Math.round(doc.scrollLeft/doc.clientWidth)));
+        if(i!==cur){ setInfo(i); remember(i); }
+      }
+      updTop();
+    }
+  },true);
+  addEventListener('scroll',()=>{
+    if(isH()) return;
+    let k=0; pages.forEach((pg,j)=>{ if(pg.getBoundingClientRect().top<=bar.offsetHeight+40) k=j; });
+    if(k!==cur) setInfo(k);
+    updTop();
+  },{passive:true});
+
+  // 横式ではページ内リンクをJSで移動（同じハッシュでも動くように）
+  document.addEventListener('click',e=>{
+    const a=e.target.closest('a[href^="#"]'); if(!a||!isH()) return;
+    const el=document.getElementById(a.getAttribute('href').slice(1)); if(!el) return;
+    const pg=el.closest('.page'); if(!pg) return;
+    e.preventDefault();
+    const i=pages.indexOf(pg); pg.scrollTop=0; goH(i,true); remember(i);
+  });
+  addEventListener('keydown',e=>{
+    if(!isH()||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey) return;
+    if(e.target.closest('input,textarea,select')) return;
+    if(e.key==='ArrowRight'&&cur<N-1){ e.preventDefault(); goH(cur+1,true); }
+    if(e.key==='ArrowLeft'&&cur>0){ e.preventDefault(); goH(cur-1,true); }
+  });
+  function fromHash(){
+    const el=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const pg=el&&el.closest('.page'); return pg?pages.indexOf(pg):-1;
+  }
+  addEventListener('hashchange',()=>{ const i=fromHash(); if(i>=0&&isH()&&i!==cur){ pages[i].scrollTop=0; goH(i,true); } });
+
+  // 表示方式の切り替え
+  function setMode(m,first){
+    const i=cur;
+    root.classList.remove('h','v'); root.classList.add(m);
+    segBtns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===m)));
+    try{ localStorage.setItem('siyousyoMode',m); }catch(e){}
+    if(m==='h'){ scrollTo({top:0,behavior:'instant'}); goH(i,false); }
+    else { doc.scrollLeft=0; goV(i); }
+    updTop();
+  }
+  segBtns.forEach(b=>b.addEventListener('click',()=>{ if(!root.classList.contains(b.dataset.m)) setMode(b.dataset.m); }));
+
+  tb.addEventListener('click',()=>{
+    const beh=reduce()?'instant':'smooth';
+    if(isH()) pages[cur].scrollTo({top:0,behavior:beh}); else scrollTo({top:0,behavior:beh});
+  });
+
+  // 初期表示
+  const first=fromHash(); setInfo(first>=0?first:0);
+  segBtns.forEach(b=>b.setAttribute('aria-pressed',String(root.classList.contains(b.dataset.m))));
+  if(isH()) goH(cur,false); else if(first>0) goV(first);
+  updTop();
 })();
 </script>
 </body>

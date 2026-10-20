@@ -6,11 +6,12 @@
 <title>TEB防災速報Web 利用者向け仕様書</title>
 <style>
 /* ===== 色・サイズはここで一括変更できます ===== */
-:root{ --blue:#0017c1; --ink:#161616; --muted:#555; --line:#d4d4d4; --head:#f0f0f0; --dark:#1f1f1f; --link:#0b4fa8; --green:#06c755; }
+/* デジタル庁デザインシステム（DADS）のトークンに準拠 */
+:root{ --blue:#0017c1; --blue-dark:#00118f; --blue-bg:#e8f1fe; --ink:#1a1a1a; --muted:#4d4d4d; --line:#cccccc; --head:#f2f2f2; --dark:#1f1f1f; --link:#0017c1; --green:#06c755; --red:#ec0000; --red-bg:#fdeeee; --focus:#ffd43d }
 *{ box-sizing:border-box }
-html{ background:#e9e9ec }
-body{ margin:0; padding:20px 12px 40px; color:var(--ink); font:14.5px/1.85 "Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif }
-.doc{ max-width:860px; margin:0 auto; background:#fff; padding:56px 60px; box-shadow:0 1px 6px rgba(0,0,0,.25) }
+html{ background:#f2f2f2; scroll-behavior:smooth }
+body{ margin:0; padding:20px 12px 40px; color:var(--ink); font:16px/1.7 "Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif }
+.doc{ max-width:860px; margin:0 auto; background:#fff; padding:56px 60px; border-radius:8px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.18) }
 h2{ margin:44px 0 16px; padding-bottom:10px; font-size:25px; border-bottom:3px solid var(--blue) }
 h2 i{ font-style:normal; color:var(--blue); margin-right:10px }
 h3{ margin:30px 0 12px; padding-left:12px; font-size:18px; border-left:5px solid var(--blue) }
@@ -70,27 +71,66 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 .popup .btns .line{ background:var(--green); border-color:var(--green); color:#fff }
 .cover{ margin:-56px -60px 40px; padding:90px 60px; background:var(--blue); color:#fff }
 .cover small{ color:#fff; letter-spacing:.1em } .cover h1{ margin:30px 0 0; font-size:40px; line-height:1.4 }
-.toc{ display:grid; grid-template-columns:40px 1fr; gap:2px 0; margin:0; }
-.toc b{ color:var(--blue); font-size:20px } .toc span{ display:block }
+
+
+/* ===== デジタル庁デザインシステム風の整え ===== */
+body{ letter-spacing:.02em; font-feature-settings:"palt" }
+h2{ margin:56px 0 20px; padding-bottom:12px; font-size:28px; line-height:1.5; border-bottom:1px solid var(--line); position:relative; scroll-margin-top:16px }
+h2::after{ content:""; position:absolute; left:0; bottom:-1px; width:72px; height:4px; background:var(--blue) }
+h3{ margin:36px 0 14px; padding:2px 0 2px 14px; font-size:20px; line-height:1.5; border-left:4px solid var(--blue) }
+h4{ margin:26px 0 8px; font-size:17px }
+p{ margin:12px 0 }
+small{ font-size:.875em }
+a{ color:var(--link); text-underline-offset:.17em; text-decoration-thickness:max(1px,.0625rem) }
+a:hover{ color:var(--blue-dark); text-decoration-thickness:3px }
+a:focus-visible,button:focus-visible{ outline:4px solid var(--focus); outline-offset:2px; box-shadow:0 0 0 2px #000; border-radius:4px }
+kbd{ padding:1px 8px; border:1px solid #767676; border-radius:4px; background:var(--head) }
+.tag{ padding:2px 10px; border-radius:4px; font-size:12px; background:var(--blue) }
+.note{ margin:24px 0; padding:16px 20px; border:1px solid #b3c9f5; border-left:6px solid var(--blue); border-radius:8px; background:var(--blue-bg) }
+.note.red{ border-color:#f4a6a6; border-left-color:var(--red); background:var(--red-bg) }
+.note b{ margin-bottom:4px; font-size:1.0625em }
+.note.red b{ color:#ce0000 }
+table{ margin:16px 0; font-size:15px; border-top:1px solid var(--ink) }
+th,td{ padding:14px 16px }
+thead th{ background:var(--head); border-bottom:1px solid var(--ink) }
+tbody th{ font-weight:700 }
+.fig{ margin:20px 0; border-radius:8px; background:#fafafa }
+figcaption{ font-size:13px }
+/* 目次 */
+.toc{ margin:8px 0 28px; border-top:1px solid var(--ink) }
+.toc a{ display:flex; align-items:center; gap:16px; min-height:64px; padding:12px 44px 12px 12px; position:relative; border-bottom:1px solid var(--line); color:var(--ink); text-decoration:none }
+.toc a::after{ content:""; position:absolute; right:18px; top:50%; width:10px; height:10px; margin-top:-7px; border:solid var(--blue); border-width:2px 2px 0 0; transform:rotate(45deg) }
+.toc a:hover{ background:var(--blue-bg) }
+.toc a:hover em{ color:var(--blue-dark); text-decoration:underline; text-decoration-thickness:2px }
+.toc b{ flex:none; display:grid; place-items:center; width:36px; height:36px; border-radius:50%; background:var(--blue); color:#fff; font-size:16px }
+.toc span{ display:block; line-height:1.5 }
+.toc em{ display:block; font-style:normal; font-weight:700; font-size:17px }
+.toc small{ display:block; color:var(--muted) }
+/* 右下：ページ先頭へ戻る */
+.totop{ position:fixed; right:max(16px,env(safe-area-inset-right)); bottom:max(16px,env(safe-area-inset-bottom)); z-index:50; display:flex; flex-direction:column; align-items:center; justify-content:center; width:56px; height:56px; padding:0; border:2px solid #fff; border-radius:50%; background:var(--blue); color:#fff; font:700 11px/1.1 inherit; font-family:inherit; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.35); opacity:0; visibility:hidden; transform:translateY(8px); transition:opacity .2s,transform .2s,visibility .2s }
+.totop.show{ opacity:1; visibility:visible; transform:none }
+.totop:hover{ background:var(--blue-dark) }
+.totop::before{ content:""; width:11px; height:11px; margin:3px 0 3px; border:solid #fff; border-width:3px 3px 0 0; transform:rotate(-45deg) }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto } .totop{ transition:none } }
 
 /* ===== スマホ表示：紙の枠をやめて全幅・縦積みにする ===== */
 @media screen and (max-width:720px){
   html{ background:#fff; -webkit-text-size-adjust:100% }
-  body{ padding:0; font-size:15px; line-height:1.8 }
+  body{ padding:0; font-size:16px }
+  .doc{ border-radius:0 }
   .doc{ max-width:none; padding:24px 16px 48px; box-shadow:none }
   .cover{ margin:-24px -16px 28px; padding:56px 16px }
   .cover h1{ font-size:28px }
-  h2{ margin:36px 0 14px; font-size:21px }
-  h3{ margin:26px 0 10px; font-size:17px }
+  h2{ margin:40px 0 16px; font-size:23px }
+  h3{ margin:28px 0 12px; font-size:18px }
   .note{ padding:12px 14px }
-  .toc{ grid-template-columns:30px 1fr; gap:6px 0 }
   /* 表：項目名を上、内容を下に縦積み */
   table:not(.keep){ border-top:2px solid var(--ink) }
   table:not(.keep) thead{ display:none }
   table:not(.keep) tr{ display:block; padding:10px 0; border-bottom:1px solid var(--line) }
   table:not(.keep) th,table:not(.keep) td{ display:block; width:auto!important; padding:0; border:0 }
   table:not(.keep) tbody th{ margin-bottom:3px; font-size:14.5px; color:var(--blue) }
-  table:not(.keep) td{ font-size:14px }
+  table:not(.keep) td{ font-size:15px }
   /* 縦積みしない表は文字と余白を詰める */
   table.keep{ font-size:13px }
   table.keep th,table.keep td{ padding:8px 6px }
@@ -105,13 +145,14 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 }
 @media print{
   html{ background:#fff } body{ padding:0 } .doc{ max-width:none; padding:0; box-shadow:none }
+  .totop{ display:none } .toc a::after{ display:none } .doc{ border-radius:0 }
   .cover{ margin:0 0 30px } .br{ break-before:page } .fig,table,.note{ break-inside:avoid }
 }
 @page{ size:A4; margin:16mm 14mm }
 </style>
 </head>
 <body>
-<div class="doc">
+<div class="doc" id="top">
 
 <!-- ===================== 表紙 ===================== -->
 <div class="cover">
@@ -128,23 +169,23 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 <p><small>本書は利用者向けの機能説明です。防災行動の最終判断は、必ず気象庁・自治体などの公式情報をご確認のうえ、ご自身の責任で行ってください。</small></p>
 
 <!-- ===================== 目次 ===================== -->
-<h2 class="br">目次</h2>
-<div class="toc">
-  <b>1</b><span><b style="color:inherit;font-size:inherit">サービス概要</b><br><small>目的・特長・動作環境</small></span>
-  <b>2</b><span><b style="color:inherit;font-size:inherit">画面構成</b><br><small>ヘッダー・タブ・カード</small></span>
-  <b>3</b><span><b style="color:inherit;font-size:inherit">タブ別の機能と表示される情報</b><br><small>気象／地震火山／P2P／その他／時系列XML</small></span>
-  <b>4</b><span><b style="color:inherit;font-size:inherit">緊急地震速報（EEW）ポップアップ</b><br><small>表示条件・操作・効果音</small></span>
-  <b>5</b><span><b style="color:inherit;font-size:inherit">カードの操作</b><br><small>コピー・LINE転送・検索</small></span>
-  <b>6</b><span><b style="color:inherit;font-size:inherit">設定</b><br><small>表示・通知・EEW・特別措置</small></span>
-  <b>7</b><span><b style="color:inherit;font-size:inherit">データ元と更新方法</b><br><small>取得間隔・接続が切れたとき</small></span>
-  <b>8</b><span><b style="color:inherit;font-size:inherit">利用規約・二次利用・禁止事項</b></span>
-  <b>9</b><span><b style="color:inherit;font-size:inherit">ご利用上の注意とよくある質問</b></span>
-</div>
+<h2 class="br" id="toc-top">目次</h2>
+<nav class="toc" aria-label="目次">
+  <a href="#sec1"><b>1</b><span><em>サービス概要</em><small>目的・特長・動作環境</small></span></a>
+  <a href="#sec2"><b>2</b><span><em>画面構成</em><small>ヘッダー・タブ・カード</small></span></a>
+  <a href="#sec3"><b>3</b><span><em>タブ別の機能と表示される情報</em><small>気象／地震火山／P2P／その他／時系列XML</small></span></a>
+  <a href="#sec4"><b>4</b><span><em>緊急地震速報（EEW）ポップアップ</em><small>表示条件・操作・効果音</small></span></a>
+  <a href="#sec5"><b>5</b><span><em>カードの操作</em><small>コピー・LINE転送・検索</small></span></a>
+  <a href="#sec6"><b>6</b><span><em>設定</em><small>表示・通知・EEW・特別措置</small></span></a>
+  <a href="#sec7"><b>7</b><span><em>データ元と更新方法</em><small>取得間隔・接続が切れたとき</small></span></a>
+  <a href="#sec8"><b>8</b><span><em>利用規約・二次利用・禁止事項</em></span></a>
+  <a href="#sec9"><b>9</b><span><em>ご利用上の注意とよくある質問</em></span></a>
+</nav>
 <h4>この文書の読み方</h4>
 <p>画面上のボタン名・タブ名は <kbd>このような枠</kbd> で示します。<span class="tag">自動</span> は操作なしで動作する機能です。図は実際の画面のデザイン（配色・文字の大きさ・並び）に合わせて再現した簡略図で、絵文字アイコンやロゴは省略しています。</p>
 
 <!-- ===================== 1 サービス概要 ===================== -->
-<h2 class="br"><i>1</i>サービス概要</h2>
+<h2 class="br" id="sec1"><i>1</i>サービス概要</h2>
 <h3>1.1 目的</h3>
 <p>TEB防災速報Webは、気象庁などが公開している防災情報を自動で取得し、読みやすいカード形式で時系列に並べて表示するサービスです。ページを開いている間、新しい情報が発表されると自動でカードが追加されます。</p>
 <h3>1.2 主な特長</h3>
@@ -172,7 +213,7 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 <div class="note red"><b>ご注意</b>本サービスは、ブラウザで画面を開いている間に情報を取得します。画面を閉じている間は新しい情報を受け取れません。また、公式の防災情報伝達手段の代わりにはなりません。</div>
 
 <!-- ===================== 2 画面構成 ===================== -->
-<h2 class="br"><i>2</i>画面構成</h2>
+<h2 class="br" id="sec2"><i>2</i>画面構成</h2>
 <p>画面は上から「ヘッダー」「タブ」「更新状況表示」「カード一覧」の順に構成されています。</p>
 
 <figure class="fig" style="margin:14px 0">
@@ -256,7 +297,7 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 <div class="note"><b>初回読み込みについて</b>起動直後は、各情報元から直近の情報をまとめて取得します。このとき取得した情報は新着としては扱われず、通知音も鳴りません。</div>
 
 <!-- ===================== 3 タブ別の機能 ===================== -->
-<h2 class="br"><i>3</i>タブ別の機能と表示される情報</h2>
+<h2 class="br" id="sec3"><i>3</i>タブ別の機能と表示される情報</h2>
 <h3>3.1 <span class="tag">気象</span> タブ</h3>
 <p>気象庁が随時発表する気象関連の情報を表示します。</p>
 <table>
@@ -288,7 +329,7 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
   <thead><tr><th>情報の種類</th><th>内容</th></tr></thead>
   <tbody>
   <tr><th>地震情報</th><td>震度・震源・マグニチュードなど。遠地地震情報、遠地大規模噴火情報も含みます。</td></tr>
-  <tr><th>緊急地震速報</th><td>予報・警報・取消。詳細は第4章を参照してください。</td></tr>
+  <tr><th>緊急地震速報</th><td>予報・警報・取消。詳細は<a href="#sec4">第4章</a>を参照してください。</td></tr>
   <tr><th>津波情報</th><td>津波警報・注意報・予報、津波到達予想・津波観測の情報、解除。</td></tr>
   <tr><th>長周期地震動に関する情報</th><td>長周期地震動の階級に関する情報。</td></tr>
   <tr><th>火山情報</th><td>噴火警報・予報、火山の状況に関する解説情報（臨時を含む）、降灰予報（速報・詳細）。</td></tr>
@@ -340,7 +381,7 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 </table>
 
 <!-- ===================== 4 EEW ===================== -->
-<h2 class="br"><i>4</i>緊急地震速報（EEW）ポップアップ</h2>
+<h2 class="br" id="sec4"><i>4</i>緊急地震速報（EEW）ポップアップ</h2>
 <p>緊急地震速報を検知すると、どのタブを見ていても画面下部にポップアップが表示され、背景が少し暗くなります。</p>
 <figure class="fig" style="margin:14px 0">
   <div class="phone" style="margin:0 auto" data-tab="1">
@@ -363,14 +404,14 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
   <tr><th>自動で閉じる</th><td>表示から約3分後に自動で閉じます。</td></tr>
   <tr><th>効果音</th><td>新しい地震を検知したときに鳴ります。予報と警報で異なる効果音です。</td></tr>
   <tr><th>取消</th><td>取り消された場合は「緊急地震速報（取消）」のカードが地震火山タブに追加されます。</td></tr>
-  <tr><th>予報の扱い</th><td>警報未満の「予報」は、設定で表示のオン・オフを選べます（第6章）。</td></tr>
+  <tr><th>予報の扱い</th><td>警報未満の「予報」は、設定で表示のオン・オフを選べます（<a href="#sec6">第6章</a>）。</td></tr>
   </tbody>
 </table>
 <div class="note red"><b>重要：緊急地震速報についての注意</b>本サービスの緊急地震速報は公開データを取得して表示するもので、通信状況などにより遅延・欠落が生じる可能性があります。揺れから身を守る行動は、テレビ・ラジオ・スマートフォンの公式通知など公的な伝達手段を最優先にしてください。</div>
 <div class="note"><b>「タブを開いていなくても受信する」について</b>設定でオンにすると、ブラウザの別のタブを表示していても受信を続けます。ただし、ブラウザ自体を終了したり、端末がスリープ状態になったりすると受信できない場合があります。</div>
 
 <!-- ===================== 5 カードの操作 ===================== -->
-<h2 class="br"><i>5</i>カードの操作</h2>
+<h2 class="br" id="sec5"><i>5</i>カードの操作</h2>
 <h3>5.1 コピー・LINE転送</h3>
 <table>
   <thead><tr><th>操作</th><th>説明</th></tr></thead>
@@ -379,7 +420,7 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
   <tr><th><kbd>LINE転送</kbd></th><td>カードの本文をLINEの送信画面に引き継ぎます。送り先はLINE側の画面で選びます。</td></tr>
   </tbody>
 </table>
-<div class="note"><b>画像の扱い</b>気象防災速報などの添付画像は、タップで拡大表示できます。LINEへの画像転送に対応していない環境では、拡大表示で代替されます。画像の転載は禁止されています（第8章）。</div>
+<div class="note"><b>画像の扱い</b>気象防災速報などの添付画像は、タップで拡大表示できます。LINEへの画像転送に対応していない環境では、拡大表示で代替されます。画像の転載は禁止されています（<a href="#sec8">第8章</a>）。</div>
 <h3>5.2 全タブ検索</h3>
 <ol>
   <li>ヘッダーの <kbd>検索</kbd>（虫めがね）をタップします。</li>
@@ -396,7 +437,7 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 </ul>
 
 <!-- ===================== 6 設定 ===================== -->
-<h2 class="br"><i>6</i>設定</h2>
+<h2 class="br" id="sec6"><i>6</i>設定</h2>
 <p>ヘッダー右の <kbd>設定</kbd>（歯車）から開きます。設定内容はお使いの端末（ブラウザ）に保存されます。別の端末や別のブラウザには引き継がれません。</p>
 <table>
   <thead><tr><th>項目</th><th>説明</th></tr></thead>
@@ -435,7 +476,7 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 <p>「詳細設定」内の <kbd>ポップアップをテスト表示</kbd> は、地震火山タブにある最新のEEWを、実際のポップアップと同じ見た目・内容で表示します。使い方の確認用で、実際の発表ではありません。<kbd>閉じる</kbd> で終了します。</p>
 
 <!-- ===================== 7 データ元 ===================== -->
-<h2 class="br"><i>7</i>データ元と更新方法</h2>
+<h2 class="br" id="sec7"><i>7</i>データ元と更新方法</h2>
 <h3>7.1 データ元</h3>
 <table>
   <thead><tr><th>情報元</th><th>主な用途</th></tr></thead>
@@ -476,7 +517,7 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 <div class="note"><b>ポイント</b>津波情報は気象庁のフィードから常時約1秒ごとにfetchで取得しているため、P2Pの常時接続の状態に左右されません。P2Pの接続が切れても、気象庁の情報は更新され続けます。</div>
 
 <!-- ===================== 8 利用規約 ===================== -->
-<h2 class="br"><i>8</i>利用規約・二次利用・禁止事項</h2>
+<h2 class="br" id="sec8"><i>8</i>利用規約・二次利用・禁止事項</h2>
 <p>本サービスの利用にあたっては、利用規約（第3版）への同意が必要です。全文は <kbd>設定</kbd> → <kbd>利用規約を確認</kbd> からいつでも確認できます。以下は要点であり、正式な内容は画面上の利用規約が優先されます。</p>
 <h3>8.1 利用規約への同意</h3>
 <ul>
@@ -514,7 +555,7 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 <p>規約に違反する、またはそのおそれがある場合、運営者は内容・悪質性・影響などを総合的に考慮し、注意、利用の制限、個別許可の取り消しなど必要な措置をとることがあります。同様の違反でも、事情に応じて対応が異なる場合があります。</p>
 
 <!-- ===================== 9 注意とFAQ ===================== -->
-<h2 class="br"><i>9</i>ご利用上の注意とよくある質問</h2>
+<h2 class="br" id="sec9"><i>9</i>ご利用上の注意とよくある質問</h2>
 <h3>9.1 ご利用上の注意</h3>
 <ul>
   <li>本サービスは補助的な情報提供ツールです。避難の判断は、自治体の避難情報、気象庁の公式発表、テレビ・ラジオなどを併せて確認してください。</li>
@@ -534,13 +575,15 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
   <tr><th>音が鳴りません</th><td>設定の「更新時に通知音を鳴らす」がオンか、端末の音量・マナーモードを確認してください。ブラウザによっては、画面を一度タップするまで音が再生されないことがあります。</td></tr>
   <tr><th>文字が小さい／大きい</th><td>設定の「カード内容の文字サイズ」で12〜22pxの範囲で変更できます。</td></tr>
   <tr><th>タブが押しにくい</th><td>設定の「タブ切り替えを画面下部に表示する」をオンにしてください。</td></tr>
-  <tr><th>情報を共有してよいですか？</th><td>私的な共有は自由です。公開の場での転載は第8章の条件を満たす場合に限られ、画像の転載は禁止です。</td></tr>
+  <tr><th>情報を共有してよいですか？</th><td>私的な共有は自由です。公開の場での転載は<a href="#sec8">第8章</a>の条件を満たす場合に限られ、画像の転載は禁止です。</td></tr>
   <tr><th>問い合わせ先は？</th><td>運営の公式X（TEB防災）をご確認ください。ヘッダーのロゴからも移動できます。</td></tr>
   </tbody>
 </table>
 <div class="note"><b>免責事項</b>本書の内容は作成時点のものです。機能・画面・データ元・利用規約は、予告なく変更されることがあります。最新の利用規約は、アプリ内の「設定」→「利用規約を確認」をご覧ください。</div>
 
 </div>
+
+<button type="button" class="totop" id="totop" aria-label="ページの先頭へ戻る">先頭へ</button>
 
 <!-- ===== 図で共通のヘッダー・タブ・更新状況を自動で付ける（data-tab：0気象 1地震火山 2P2P 3その他 4時系列XML） ===== -->
 <script>
@@ -553,6 +596,17 @@ document.querySelectorAll('.phone[data-tab]').forEach(p=>{
     + '<div class="tabs">' + tabs.map((t,i)=> idx[i]===null ? '<span class="sm">▾</span>' : '<span'+(idx[i]===on?' class="on"':'')+'>'+t+'</span>').join('') + '</div>'
     + '<div class="st">最終更新: 2026/10/20 12:34:50</div>');
 });
+</script>
+<script>
+(function(){
+  const b=document.getElementById('totop');
+  const toggle=()=>b.classList.toggle('show',window.scrollY>400);
+  addEventListener('scroll',toggle,{passive:true}); toggle();
+  b.addEventListener('click',()=>{
+    const r=matchMedia('(prefers-reduced-motion:reduce)').matches;
+    scrollTo({top:0,behavior:r?'auto':'smooth'});
+  });
+})();
 </script>
 </body>
 </html>

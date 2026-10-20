@@ -72,6 +72,37 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 .cover small{ color:#fff; letter-spacing:.1em } .cover h1{ margin:30px 0 0; font-size:40px; line-height:1.4 }
 .toc{ display:grid; grid-template-columns:40px 1fr; gap:2px 0; margin:0; }
 .toc b{ color:var(--blue); font-size:20px } .toc span{ display:block }
+
+/* ===== スマホ表示：紙の枠をやめて全幅・縦積みにする ===== */
+@media screen and (max-width:720px){
+  html{ background:#fff; -webkit-text-size-adjust:100% }
+  body{ padding:0; font-size:15px; line-height:1.8 }
+  .doc{ max-width:none; padding:24px 16px 48px; box-shadow:none }
+  .cover{ margin:-24px -16px 28px; padding:56px 16px }
+  .cover h1{ font-size:28px }
+  h2{ margin:36px 0 14px; font-size:21px }
+  h3{ margin:26px 0 10px; font-size:17px }
+  .note{ padding:12px 14px }
+  .toc{ grid-template-columns:30px 1fr; gap:6px 0 }
+  /* 表：項目名を上、内容を下に縦積み */
+  table:not(.keep){ border-top:2px solid var(--ink) }
+  table:not(.keep) thead{ display:none }
+  table:not(.keep) tr{ display:block; padding:10px 0; border-bottom:1px solid var(--line) }
+  table:not(.keep) th,table:not(.keep) td{ display:block; width:auto!important; padding:0; border:0 }
+  table:not(.keep) tbody th{ margin-bottom:3px; font-size:14.5px; color:var(--blue) }
+  table:not(.keep) td{ font-size:14px }
+  /* 縦積みしない表は文字と余白を詰める */
+  table.keep{ font-size:13px }
+  table.keep th,table.keep td{ padding:8px 6px }
+  /* 図 */
+  .fig{ padding:12px 8px }
+  .fig .row{ gap:16px }
+  .phone,.phone[style]{ width:100%!important; max-width:340px; margin-left:auto; margin-right:auto }
+  .welcome{ flex:none; width:100%; max-width:340px; min-width:0; padding:40px 16px }
+  .fig ol{ flex:none!important; width:100%; min-width:0!important; padding-left:20px }
+  .tabs span{ font-size:11.5px }
+  figcaption{ text-align:left }
+}
 @media print{
   html{ background:#fff } body{ padding:0 } .doc{ max-width:none; padding:0; box-shadow:none }
   .cover{ margin:0 0 30px } .br{ break-before:page } .fig,table,.note{ break-inside:avoid }
@@ -121,7 +152,7 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
   <thead><tr><th>特長</th><th>内容</th></tr></thead>
   <tbody>
   <tr><th>自動更新</th><td>画面を再読み込みしなくても、新着情報が自動でカードとして追加されます。</td></tr>
-  <tr><th>情報の一元表示</th><td>気象警報、地震、津波、火山、竜巻、線状降水帯など、複数の情報元を4つのタブ（と時系列一覧）に整理して表示します。</td></tr>
+  <tr><th>情報の一元表示</th><td>気象警報、気象防災速報、地震、津波、火山、線状降水帯など、複数の情報元を4つのタブ（と時系列一覧）に整理して表示します。</td></tr>
   <tr><th>緊急地震速報への即応</th><td>緊急地震速報（予報・警報）を検知すると、画面下部のポップアップと効果音でお知らせします。</td></tr>
   <tr><th>共有しやすい</th><td>各カードをワンタップでコピー、またはLINEへ転送できます。</td></tr>
   <tr><th>全タブ横断検索</th><td>ヘッダーの検索から、すべてのタブのカードをまとめて検索できます。</td></tr>
@@ -159,7 +190,6 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 ■ レベル5大雨特別警報
 【発表】△△市</div>
         </div>
-        <!-- ★ここが差し替え箇所（記録的短時間大雨情報 → 全般気象解説情報） -->
         <div class="card">
           <div class="btns"><span>コピー</span><span class="line">LINE転送</span></div>
           <div class="ttl"><b>全般気象解説情報</b><u>VPZJ51</u></div>
@@ -234,16 +264,14 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
   <tbody>
   <tr><th>気象警報</th><td>大雨・土砂災害・高潮、暴風（暴風雪）、波浪・大雪などの警報・特別警報・注意報の発表、切り替え、解除。種類ごとに別のカードになります。</td></tr>
   <tr><th>指定河川洪水予報</th><td>河川の氾濫に関する予報。</td></tr>
-  <tr><th>記録的短時間大雨情報</th><td>短時間の猛烈な雨を観測したときの情報。</td></tr>
-  <tr><th>竜巻注意情報</th><td>竜巻等の激しい突風に注意が必要なときの情報（市町村等／目撃情報あり）。</td></tr>
   <tr><th>顕著な大雨に関する情報</th><td>線状降水帯に関する情報。</td></tr>
   <tr><th>全般・地方気象情報／天候情報</th><td>各種の気象解説情報。</td></tr>
-  <tr><th>気象防災速報</th><td>注意喚起の画像付きカード。画像をタップすると拡大して確認できます。</td></tr>
+  <tr><th>気象防災速報</th><td>従来の「記録的短時間大雨情報」「竜巻注意情報」に代わる情報。注意喚起の画像付きカードで表示され、画像をタップすると拡大して確認できます。</td></tr>
   </tbody>
 </table>
 <h4>気象警報カードの見出し表記（警戒レベルの色分け）</h4>
 <p>気象警報のカード本文は、警戒の段階ごとにブロックに分かれ、各ブロックの先頭に色付きの四角が付きます。表記は本サービスが電文から組み立てたものです。正式な内容は気象庁の発表で確認してください。</p>
-<table>
+<table class="keep">
   <thead><tr><th>先頭の四角</th><th>ブロックの見出し</th><th>ブロックに載る内容</th></tr></thead>
   <tbody>
   <tr><td><span class="sq" style="background:#000"></span>黒</td><td>レベル5 ○○特別警報</td><td>【発表】【継続】の地域</td></tr>
@@ -469,7 +497,7 @@ figcaption{ margin-top:14px; text-align:center; font-size:12px; color:var(--mute
 </table>
 <h3>8.3 二次利用（転載・共有）のルール</h3>
 <p>家族・友人への共有など私的な範囲での利用は、運営の許可なく行えます。それ以外の転載・共有は、次のすべてを満たす場合に限り、運営の許可なく行えます。</p>
-<table>
+<table class="keep">
   <thead><tr><th style="width:8%">No.</th><th>条件</th></tr></thead>
   <tbody>
   <tr><td>1</td><td>防災・減災、その他公益目的であること。</td></tr>
